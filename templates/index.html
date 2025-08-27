@@ -148,13 +148,14 @@
                       <td>类型</td>
                   </tr>
                   {% for movie in movies %}
-                  <tr>
-                      <td>{{ movie[0] }}</td>
-                        <td>
-                            <a href="{{ movie[2] }}" target="_blank">
-                                {{movie[1]}}
-                            </a>
-                        </td>
+<tr>
+    <td>{{ movie[0] }}</td>
+      <td>
+          <a href="{{ url_for('movie_by_name', name=movie[1]) }}">
+              {{movie[1]}}
+          </a>
+      </td>
+      <td>{{ movie[3] }}</td>
                         <td>{{ movie[3] }}</td>
                         <td>{{ movie[4] }}</td>
                         <td>{{ movie[5] }}</td>

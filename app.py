@@ -133,6 +133,35 @@ def area():
     except Exception as e:
         flash(f'加载地图数据失败: {str(e)}', 'error')
         return render_template('area.html', country_data={})
+    
+# 直接按电影名查看分析
+@app.route('/movie/<path:name>')
+def movie_by_name(name):
+    try:
+        matched = comments_df[comments_df['电影名称'] == name]
+        if matched.empty:
+            matched = comments_df[comments_df['电影名称'].str.contains(name, case=False, na=False)]
+        if matched.empty:
+            flash('未找到该电影！', 'error')
+            return redirect(url_for('index'))
+
+        movie = matched.iloc[0]
+        movie_comments = comments_df[comments_df['电影名称'] == movie['电影名称']]['评论内容'].tolist()
+        if not movie_comments:
+            movie_comments = ["暂无真实评论数据"]
+            flash('未找到该电影的评论', 'warning')
+
+        analysis_result = Analyzer.analyze_comments(movie_comments)
+        movie_data = {
+            '电影名称': movie['电影名称'],
+            '评论内容': movie.get('评论内容', ''),
+            'sentiment': analysis_result['sentiment_counts'],
+            'comments': analysis_result['comments']
+        }
+        return render_template('movie_detail.html', movie=movie_data)
+    except Exception as e:
+        flash(f'处理数据时出错: {str(e)}', 'error')
+        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
