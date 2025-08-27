@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索电影</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('{{ url_for("static", filename="background.jpg") }}') no-repeat fixed center;
+            background-size: cover;
+            display: flex;
+            height: 100vh;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            text-shadow: 1px 1px 2px black; /* 添加文字阴影 */
+        }
+        .header h1 {
+            text-align: center;
+            padding: 10px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* 添加文字阴影 */
+        }
+        .header h3 {
+            text-align: center;
+            padding: 5px;
+            color: white;
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            left: 0;
+            background-color: #111;
+            padding-top: 150px; /* Adjusted to account for header height */
+            transition: 0.3s;
+        }
+        .sidebar a {
+            padding: 20px 15px; /* 增加垂直方向的padding */
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 100px; /* Adjusted to account for sidebar width */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 30px;
+            flex-grow: 1;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: center;
+            width: 100%;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 15px;
+            color: #721c24;
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 255, 0.5);
+            width: 150px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>搜索</h1>
+
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('index') }}">首页</a>
+        <a href="{{ url_for('search') }}">搜索</a>
+        <a href="{{ url_for('wordcloud') }}">评论词云图</a>
+        <a href="{{ url_for('rating_analysis') }}">评分分析</a>
+        <a href="{{ url_for('area') }}">地区占比</a>
+    </div>
+    <div class="content">
+        <h1>搜索电影</h1>
+        <form method="POST">
+            <label for="movie_id">请搜索电影名称查看情感分析结果：</label>
+            <input type="text" id="movie_id" name="movie_id" required>
+            <button type="submit">搜索</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

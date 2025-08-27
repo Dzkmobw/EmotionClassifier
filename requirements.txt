@@ -1,0 +1,7 @@
+Flask>=2.2
+pandas>=1.5
+numpy>=1.23
+scipy>=1.9
+snownlp>=0.12
+wordcloud>=1.9
+pillow>=9.0 

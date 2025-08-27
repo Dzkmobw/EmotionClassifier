@@ -1,0 +1,42 @@
+# ==========================
+# Python 通用忽略项
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 虚拟环境
+env/
+venv/
+.venv/
+emo/               # 你的虚拟环境名称
+
+# IDE 配置文件
+.vscode/
+.idea/
+*.iml
+
+# 日志文件
+*.log
+
+# ==========================
+# 数据文件 & 输出目录
+# ==========================
+data/all_comments.csv    # 大文件忽略
+data/*.csv               # 可选：忽略所有 CSV 文件
+output/                  # 分析输出目录（图表、结果文件等）
+
+# ==========================
+# Jupyter Notebook
+# ==========================
+.ipynb_checkpoints/
+*.ipynb
+
+# ==========================
+# 系统文件
+# ==========================
+.DS_Store
+Thumbs.db
+data/all_comments.csv
+data/all_comments.csv

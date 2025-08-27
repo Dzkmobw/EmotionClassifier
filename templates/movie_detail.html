@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.电影名称 }} - 情感分析结果</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            left: 0;
+            background-color: #111;
+            padding-top: 150px;
+        }
+        .sidebar a {
+            padding: 20px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+            padding-top: 150px;
+        }
+        .movie-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 80%;
+            height: 500px;
+            margin: 0 auto;
+        }
+        .movie-title {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .meta-item {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .flash-messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .return-button {
+            display: block;
+            width: 100px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .return-button:hover {
+            background-color: #0056b3;
+        }
+        .comments-section {
+            margin-top: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .comment {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+        .sentiment-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .positive {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .neutral {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        .negative {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ movie.电影名称 }} - 情感分析结果</h1>
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('index') }}">首页</a>
+        <a href="{{ url_for('search') }}">搜索</a>
+        <a href="{{ url_for('wordcloud') }}">评论词云图</a>
+        <a href="{{ url_for('rating_analysis') }}">评分分析</a>
+        <a href="{{ url_for('area') }}">地区占比</a>
+    </div>
+    <div class="content">
+            <div class="movie-info">
+                <h1 class="movie-title">{{ movie.电影名称 }}</h1>
+            </div>
+
+            <div class="chart-container">
+                <div id="sentimentChart" style="width: 100%; height: 100%;"></div>
+            </div>
+
+            <div class="comments-section">
+                <h3>评论分析</h3>
+                {% for comment in movie.comments %}
+                    <div class="comment">
+                        {{ comment.text }}
+                        <span class="sentiment-tag {{ comment.sentiment }}">
+                            {% if comment.sentiment == 'positive' %}积极
+                            {% elif comment.sentiment == 'neutral' %}中性
+                            {% else %}消极
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endfor %}
+                <a href="{{ url_for('search') }}" class="return-button">返回</a>
+            </div>
+</div>
+
+            <script id="sentimentData" type="application/json">{{ movie.sentiment | tojson }}</script>
+
+            <script>
+                // 初始化图表
+                const chart = echarts.init(document.getElementById('sentimentChart'));
+
+                // 情感分析数据
+                const sentiment = JSON.parse(document.getElementById('sentimentData').textContent);
+                const sentimentData = [
+                    { value: sentiment.positive, name: '积极', itemStyle: { color: '#4CAF50' } },
+                    { value: sentiment.neutral, name: '中性', itemStyle: { color: '#FFC107' } },
+                    { value: sentiment.negative, name: '消极', itemStyle: { color: '#F44336' } }
+                ];
+
+                // 图表配置
+                const option = {
+                    title: {
+                        text: '评论情感分布',
+                        subtext: '基于SnowNLP情感分析',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['积极', '中性', '消极']
+                    },
+                    series: [
+                        {
+                            name: '情感分布',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            avoidLabelOverlap: false,
+                            itemStyle: {
+                                borderRadius: 5,
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            },
+                            label: {
+                                show: true,
+                                formatter: '{b}: {c} ({d}%)'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: '18',
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: true  // 控制是否显示标签的引导线
+                            },
+                            data: sentimentData
+                        }
+                    ]
+                };
+
+                // 应用配置
+                chart.setOption(option);
+
+                // 当窗口大小改变时，响应式自动调整图表大小以适应新的窗口尺寸
+                window.addEventListener('resize', function() {
+                    chart.resize();
+                });
+            </script>
+
+</body>
+</html>

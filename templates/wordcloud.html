@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评论词云图</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            text-shadow: 1px 1px 2px black; /* 添加文字阴影 */
+        }
+        .header h1 {
+            text-align: center;
+            padding: 10px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* 添加文字阴影 */
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            left: 0;
+            background-color: #111;
+            padding-top: 150px; /* Adjusted to account for header height */
+            transition: 0.3s;
+        }
+        .sidebar a {
+            padding: 20px 15px; /* 增加垂直方向的padding */
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+            padding-top: 140px; /* Adjusted to account for header height */
+            flex-grow: 1; /* Allow content to take up remaining space */
+        }
+        .container {
+            max-width: 800px; /* Increased width */
+            margin: 20px auto; /* Center the container */
+            padding: 50px; /* Increased padding */
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .user-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .user-info img {
+            width: 200px; /* Increased size */
+            height: 200px;
+            border-radius: 50%;
+            margin-bottom: 20px; /* Increased margin */
+        }
+        .user-info p {
+            margin: 10px 0;
+            font-size: 20px; /* Increased font size */
+            color: #333;
+        }
+        a {
+            display: block;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>可视化词云图分析</h1>
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('index') }}">首页</a>
+        <a href="{{ url_for('search') }}">搜索</a>
+        <a href="{{ url_for('wordcloud') }}">评论词云图</a>
+        <a href="{{ url_for('rating_analysis') }}">评分分析</a>
+        <a href="{{ url_for('area') }}">地区占比</a>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="user-info">
+                <img src="{{ url_for('static', filename='wordcloud.png') }}" alt="词云图" style="width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

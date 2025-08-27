@@ -1,0 +1,154 @@
+<!-- templates/profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            text-shadow: 1px 1px 2px black;
+        }
+        .header h1 {
+            text-align: center;
+            padding: 10px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            left: 0;
+            background-color: #111;
+            padding-top: 150px;
+            transition: 0.3s;
+        }
+        .sidebar a {
+            padding: 20px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+            padding-top: 150px;
+            flex-grow: 1;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .user-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .user-info img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .user-info p {
+            margin: 10px 0;
+            font-size: 20px;
+            color: #333;
+        }
+        .delete-button {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #ff4444;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .delete-button:hover {
+            background-color: #cc0000;
+        }
+        .flash-messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>个人信息</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('index') }}">首页</a>
+        <a href="{{ url_for('search') }}">搜索</a>
+        <a href="{{ url_for('wordcloud') }}">评论词云图</a>
+        <a href="{{ url_for('rating_analysis') }}">评分分析</a>
+        <a href="{{ url_for('area') }}">地区占比</a>
+        <a href="{{ url_for('profile') }}">个人信息</a>
+        <a href="{{ url_for('logout') }}">注销</a>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="user-info">
+                <img src="{{ url_for('static', filename='avatar.jpg') }}" alt="用户头像">
+                <p><strong>用户名：</strong>{{ user_info['username'] }}</p>
+                <p><strong>注册时间：</strong>{{ user_info['created_at'] }}</p>
+            </div>
+            <form action="{{ url_for('delete_user') }}" method="POST">
+                <button type="submit" class="delete-button">删除用户</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

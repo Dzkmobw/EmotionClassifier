@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>豆瓣电影Top250</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('{{ url_for("static", filename="background.jpg") }}') no-repeat fixed center center;
+            background-size: cover;
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            left: 0;
+            background-color: #111;
+            transition: 0.3s;
+        }
+        .sidebar a {
+            padding: 20px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 200px;
+            margin-top: 150px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .content h2 {
+            margin-top: 0;
+        }
+        .content p {
+            line-height: 1.6;
+        }
+        .welcome {
+            text-align: center;
+            top:0;
+            height: 130px;
+            position: fixed;  /*固定定位 */
+            z-index:1000;
+            width:100%;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: #333;
+            color: white;
+        }
+        .movie-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .movie-item {
+            width: 150px;
+            text-align: center;
+        }
+        .movie-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        a {
+            display: block;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #333;
+            color: white;
+            position: sticky;
+            top: 130px; /* 与顶部导航栏高度匹配 */
+            z-index: 100;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .table tr:hover {
+            background-color: #e6f7ff;
+        }
+
+        .table img {
+            max-width: 50px;
+            height: auto;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome">
+        <h1>欢迎来到电影评论情感分析系统！</h1>
+        <p>探索电影的世界，了解观众的真实感受。在这里，您可以深入了解每部电影的评论情感，查看评论词云图，分析评分分布。开始您的电影探索之旅吧！</p>
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('index') }}">首页</a>
+        <a href="{{ url_for('search') }}">搜索</a>
+        <a href="{{ url_for('wordcloud') }}">评论词云图</a>
+        <a href="{{ url_for('rating_analysis') }}">评分分析</a>
+        <a href="{{ url_for('area') }}">地区占比</a>
+    </div>
+    <div class="content">
+        <h2>豆瓣电影 Top 250 榜单预览</h2>
+        <section class="counts section-bg">
+            <div class="movie-list">
+              <table class="table table-striped">
+                  <tr>
+                      <td>排名</td>
+                      <td>电影名称</td>
+                      <td>导演</td>
+                      <td>评分</td>
+                      <td>评分人数</td>
+                      <td>简介</td>
+                      <td>年份</td>
+                      <td>国家/地区</td>
+                      <td>类型</td>
+                  </tr>
+                  {% for movie in movies %}
+                  <tr>
+                      <td>{{ movie[0] }}</td>
+                        <td>
+                            <a href="{{ movie[2] }}" target="_blank">
+                                {{movie[1]}}
+                            </a>
+                        </td>
+                        <td>{{ movie[3] }}</td>
+                        <td>{{ movie[4] }}</td>
+                        <td>{{ movie[5] }}</td>
+                        <td>{{ movie[6] }}</td>
+                        <td>{{ movie[7] }}</td>
+                        <td>{{ movie[8] }}</td>
+                        <td>{{ movie[9] }}</td>
+                  {% endfor %}
+              </table>
+            </div>
+        </section>
+        </div>
+    </div>
+</body>
+</html>

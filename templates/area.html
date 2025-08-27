@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top250地区占比</title>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            text-shadow: 1px 1px 2px black;
+        }
+        .header h1 {
+            text-align: center;
+            padding: 10px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            left: 0;
+            background-color: #111;
+            padding-top: 150px;
+            transition: 0.3s;
+        }
+        .sidebar a {
+            padding: 20px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+            padding-top: 150px;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .chart-container {
+            width: 90%;
+            height: 600px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        a {
+            display: block;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Top250地区占比</h1>
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('index') }}">首页</a>
+        <a href="{{ url_for('search') }}">搜索</a>
+        <a href="{{ url_for('wordcloud') }}">评论词云图</a>
+        <a href="{{ url_for('rating_analysis') }}">评分分析</a>
+        <a href="{{ url_for('area') }}">地区占比</a>
+    </div>
+    <div class="content">
+        <div id="mainChart" class="chart-container"></div>
+    </div>
+
+    <script id="countryData" type="application/json">{{ country_data|tojson|safe }}</script>
+
+    <script>
+        // 初始化ECharts实例
+        const chartDom = document.querySelector('.chart-container');
+        const myChart = echarts.init(chartDom);
+
+        // 从模板获取数据
+        const countryData = JSON.parse(document.getElementById('countryData').textContent);
+
+        // 准备图表数据
+        const countries = Object.keys(countryData);
+        const counts = Object.values(countryData);
+
+        // 生成随机颜色
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // 为国家生成固定颜色
+        const countryColors = {};
+        countries.forEach(country => {
+            countryColors[country] = getRandomColor();
+        });
+
+        // 图表配置
+        const option = {
+            title: {
+                text: 'Top250电影制片国家/地区分布',
+                left: 'center',
+                textStyle: {
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: '{b}: {c}部'
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {
+                        title: '保存图片'
+                    },
+                    dataView: {
+                        title: '数据视图',
+                        readOnly: true
+                    },
+                    magicType: {
+                        title: {
+                            bar: '柱状图',
+                            pie: '饼图'
+                        },
+                        type: ['bar', 'pie']
+                    },
+                    restore: {
+                        title: '重置'
+                    }
+                },
+                right: 20
+            },
+            legend: {
+                data: ['电影数量'],
+                top: 30
+            },
+            xAxis: {
+                type: 'category',
+                data: countries,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 30,
+                    fontSize: 12
+                },
+                axisTick: {
+                    alignWithLabel: true
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: '电影数量',
+                axisLine: {
+                    show: true
+                },
+                axisTick: {
+                    show: true
+                },
+                splitLine: {
+                    lineStyle: {
+                        type: 'dashed'
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '电影数量',
+                    type: 'bar',
+                    barWidth: '60%',
+                    data: counts.map((count, index) => {
+                        return {
+                            value: count,
+                            name: countries[index],
+                            itemStyle: {
+                                color: countryColors[countries[index]]
+                            }
+                        };
+                    }),
+                    label: {
+                        show: true,
+                        position: 'top',
+                        formatter: '{c}'
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 应用配置
+        myChart.setOption(option);
+
+        // 窗口大小变化时重新调整图表大小
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+    </script>
+</body>
+</html>
